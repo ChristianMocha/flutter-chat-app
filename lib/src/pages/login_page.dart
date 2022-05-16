@@ -1,8 +1,11 @@
+import 'package:chat/src/helpers/mostrar_alerta.dart';
+import 'package:chat/src/services/auth_services.dart';
 import 'package:chat/src/widget/boton_azul.dart';
 import 'package:chat/src/widget/custom_input.dart';
 import 'package:chat/src/widget/labels.dart';
 import 'package:chat/src/widget/logo.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 
 class LoginPage extends StatelessWidget {
@@ -49,6 +52,8 @@ class _FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+
     return Container(
       
       margin: EdgeInsets.only(top: 40),
@@ -70,11 +75,17 @@ class _FormState extends State<_Form> {
             isPassword: true,
           ),
 
-          // TODO: crear boton
           BotonAzul(
             text: 'Ingresar',
-            onPressed: (){
-              print('Ingresando');
+            onPressed: authService.autenticando ? null : () async{
+              FocusScope.of(context).unfocus();
+              final loginOK = await authService.login(emailController.text.trim(), passwordController.text.trim(),);
+              if(loginOK){
+                // TODO: Conectar a nuestro SocketServer
+                Navigator.pushReplacementNamed(context, 'usuarios');
+              }else{
+                mostrarAlerta(context,'Error!', 'Usuario o contraseña incorrectos');
+              }
             }
           ),
           

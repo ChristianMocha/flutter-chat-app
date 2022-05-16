@@ -1,5 +1,7 @@
 import 'package:chat/src/models/usuario.dart';
+import 'package:chat/src/services/auth_services.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
@@ -20,14 +22,21 @@ class _UsuariosPageState extends State<UsuariosPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final authService = Provider.of<AuthService>(context);
+    final usuario = authService.usuario;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Usuarios', style: TextStyle(color: Colors.black87)),
+        title: Text(usuario!.nombre.toString(), style: TextStyle(color: Colors.black87)),
         elevation: 1,
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: Icon(Icons.exit_to_app, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, 'login');
+            AuthService().logout();
+          },
         ),
         actions: <Widget>[
           Container(
